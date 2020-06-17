@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: confirmation-service
-          image: docker.io/dhubau/confirmation-service:latest
+          image: docker.io/fjb4/confirmation-service:prod
           imagePullPolicy: Always
           env:
             - name: NODE_NAME
