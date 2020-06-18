@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dotnet-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dotnet-service
+  template:
+    metadata:
+      labels:
+        app: dotnet-service
+        redis-client: "true"
+    spec:
+      containers:
+        - name: dotnet-service
+          image: docker.io/fjb4/dotnet-core-react-example:latest
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: 768Mi
+              cpu: 500m
+            limits:
+              memory: 768Mi
+          ports:
+            - containerPort: 8080
+          env:
+          - name: PORT
+            value: "8080"
