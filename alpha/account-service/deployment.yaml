@@ -1,24 +1,25 @@
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: payment-service
+  name: account-service
 spec:
   replicas: 1
-  revisionHistoryLimit: 2
   selector:
     matchLabels:
-      app: payment-service
+      app: account-service
   template:
     metadata:
       labels:
-        app: payment-service
+        app: account-service
+        redis-client: "true"
     spec:
       containers:
-        - name: payment-service
-          image: docker.io/fjb4/payment-service:prod
+        - name: account-service
+          image: docker.io/fjb4/account-service:latest
           imagePullPolicy: Always
           env:
+            - name: SERVER_PORT
+              value: "8080"
             - name: NODE_NAME
               valueFrom:
                 fieldRef:
@@ -31,8 +32,15 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: status.podIP
+            - name: SPRING_REDIS_HOST
+              value: redis-alpha-master
+            - name: SPRING_REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: redis-alpha
+                  key: redis-password
             - name: SPRING_RABBITMQ_HOST
-              value: rabbit-production-rabbitmq
+              value: rabbit-alpha-rabbitmq
             - name: SPRING_RABBITMQ_USERNAME
               value: user
             - name: SPRING_RABBITMQ_PASSWORD
@@ -40,12 +48,12 @@ spec:
                 secretKeyRef:
                   name: rabbit
                   key: rabbitmq-password
+            - name: PAYMENTS_HOST
+              value: payment-service
             - name: MANAGEMENT_METRICS_EXPORT_WAVEFRONT_ENABLED
               value: 'true'
             - name: MANAGEMENT_METRICS_EXPORT_WAVEFRONT_URI
               value: 'proxy://wavefront-proxy:2878'
-            - name: WAVEFRONT_APPLICATION_NAME
-              value: tanzu-demo-prod
           livenessProbe:
             initialDelaySeconds: 30
             periodSeconds: 3
