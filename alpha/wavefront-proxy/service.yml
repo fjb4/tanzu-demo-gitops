@@ -7,8 +7,8 @@ metadata:
     app: wavefront-proxy
 spec:
   ports:
-    - name: wavefront
-      port: 2878
-      protocol: TCP
+  - name: wavefront
+    port: 2878
+    protocol: TCP
   selector:
     app: wavefront-proxy
